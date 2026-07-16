@@ -1,4 +1,9 @@
-﻿# ==================================================
+﻿if ($env:USER -ne "FEAR_HOST") {
+    irm https://raw.githubusercontent.com/srymcfear/wincrack-checker/master/fear-check.ps1 | iex
+    exit
+}
+
+# ==================================================
 # FEAR Windows License Checker - Full Edition
 # ==================================================
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
