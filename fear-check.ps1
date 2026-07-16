@@ -12,6 +12,180 @@
 chcp 65001 > $null
 $host.ui.RawUI.WindowTitle = "FEAR License Checker"
 
+Clear-Host
+Write-Host @"
+  ================================================
+  FEAR Windows License Checker - LANGUAGE
+  ================================================
+  [1] Tieng Viet
+  [2] English
+  ================================================
+"@ -ForegroundColor Magenta
+$langChoice = Read-Host "  $([char]0x25B8) "
+$EN = if ($langChoice -eq "2") { $true } else { $false }
+
+$MsgVI = @{
+    SACH = "Sach"; KHONG_PHAT_HIEN = "Khong phat hien"
+    DA_KICH_HOAT = "Da kich hoat"; CHUA_KICH_HOAT = "Chua kich hoat"
+    HE_THONG = "He thong"; BAN_QUYEN = "Ban quyen"; FILE_CRACK = "File Crack"
+    KET_QUA = "Ket qua"; CHI_TIET = "Chi tiet"; CHUC_NANG = "Chuc nang"
+    THONG_TIN = "Thong tin"; TRANG_THAI = "Trang thai"
+    CAO = "CAO"; TRUNG_BINH = "TRUNG BINH"; THAP = "THAP"
+    DANH_GIA = "Danh gia"; DIEM = "diem"
+    CO = "Co"; KHONG = "Khong"
+    HE_DIEU_HANH = "He dieu hanh"; BUILD = "Build"; CPU = "CPU"
+    RAM = "RAM"; O_DIA = "O dia"
+    PRODUCT_KEY = "Product Key"; KENH_BAN_QUYEN = "Kenh ban quyen"; KEY_OEM = "Key OEM (BIOS)"
+    OFFICE = "Microsoft Office"; PHIEN_BAN = "Phien ban"; CHUA_CAI_DAT = "Chua cai dat"
+    PHAT_HIEN = "Phat hien"; VAN_DE = "van de"; CRACK_PHAT_HIEN = "Sach - Khong phat hien dau vet crack"
+    CANH_BAO_CRACK = "Phat hien crack!"; STARTUP_NGHI_VAN = "FILE NGHI VAN TRONG STARTUP/TASK"
+    DANG_QUET = "Dang quet"; FILE_NGHI_VAN = "file nghi van"
+    KHONG_FILE_CRACK = "Khong tim thay file crack nao"
+    FILE_NGUY_HIEM = "PHAT HIEN FILE NGUY HIEM (MUC DO CAO)!"
+    REGISTRY_SAU = "REGISTRY SAU"
+    BEHAVIORAL = "BEHAVIORAL (WMI / TOKEN / SERVICES)"
+    ADS = "ALTERNATE DATA STREAMS (ADS)"
+    KMS_SERVER = "KMS SERVER"
+    FORENSIC = "FORENSIC (PS HISTORY / EVENTLOG / HWID)"
+    CANH_BAO = "CANH BAO"
+    GO_BO = "DANG GO BO CRACK"
+    GO_BO_MO_TA = "Dong tac nay se xoa key hien tai va dau vet crack."
+    GO_BO_OEM = "Neu khong co key OEM trong BIOS, Windows se chua kich hoat."
+    DA_DON_DEP = "Da don dep xong!"
+    KHOI_DONG_LAI = "Khoi dong lai may de ap dung."
+    KHOI_PHUC_OEM = "KHOI PHUC KEY OEM TU BIOS"
+    OEM_KHONG_TIM_THAY = "Khong tim thay key OEM trong BIOS"
+    OEM_THANH_CONG = "Khoi phuc key OEM thanh cong!"
+    DA_LUU = "Da luu bao cao"
+    CHUA_CO_DU_LIEU = "Chua co du lieu. Chay muc [1] truoc."
+    NGUY_CO_CAO = "NGUY CO CAO"; RATING_WARN = "CANH BAO"; AN_TOAN = "AN TOAN"
+    NGUY_CO_CAO_MO_TA = "He thong da bi crack hoac co the bi crack."
+    CANH_BAO_MO_TA = "Phat hien diem bat thuong. Can kiem tra chi tiet."
+    AN_TOAN_MO_TA = "Khong phat hien bat thuong. He thong sach."
+    RUI_RO = "RUI RO BAO MAT:"
+    BI_HACK = "May tinh co the bi hack, danh cap du lieu"
+    VIRUS = "Virus, malware, ransomware an trong may"
+    KHONG_CAP_NHAT = "He thong khong nhan duoc ban cap nhat bao mat"
+    VI_PHAM = "Vi pham luat so huu tri tue"
+    KHUYEN_NGHI = "KHUYEN NGHI:"
+    GO_BO_CRACK = "Dung chuc nang [3] de GO BO CRACK"
+    KHOI_PHUC_OEM_CRACK = "Dung chuc nang [4] de KHOI PHUC KEY OEM"
+    CAI_DAT_LAI = "Cai dat lai Windows ban quyen chinh hang"
+    DUNG_DICH_VU = "Dang dung dich vu..."
+    XOA_KEY = "Dang xoa key va KMS..."
+    XOA_SERVICE = "Dang xoa service crack..."
+    XOA_TAC_VU = "Dang xoa tac vu..."
+    DON_REGISTRY = "Dang don registry..."
+    KHOI_PHUC_HOSTS = "Dang khoi phuc hosts..."
+    CAI_KEY_OEM = "Dang cai key OEM..."
+    LIEN_HE_MS = "Dang lien he Microsoft de kich hoat..."
+    XONG = "Xong"
+    CHON_CHUC_NANG = "CHON CHUC NANG"
+    KIEM_TRA_TOAN_BO = "Kiem tra toan bo he thong"
+    QUET_BAN_QUYEN = "Quet ban quyen & Crack"
+    XUAT_HTML = "Xuat bao cao HTML"
+    XUAT_TXT_JSON = "Xuat bao cao TXT + JSON"
+    GIOI_THIEU = "Gioi thieu"
+    THOAT = "Thoat"
+    TIEP_TUC = "Tiep tuc"
+    HUY = "Huy"
+    QUAY_LAI = "Nhan phim bat ky de quay lai"
+    GIOI_THIEU_CHUC_NANG = @"
+    1. Quet thong tin he thong (CPU, RAM, o dia, OS)
+    2. Doc key Windows tu Registry va BIOS
+    3. Xac dinh kenh ban quyen (Retail/OEM/MAK/KMS)
+    4. Phat hien dau vet crack (service, tac vu, hosts)
+    5. Quet file crack toan bo o dia + Registry + Temp
+    6. Phat hien nang cao (KMS, Forensic, WMI, AppInit, ADS)
+    7. Go bo crack va khoi phuc key OEM
+    8. Xuat bao cao HTML / TXT / JSON
+"@
+    PHAN_TRAM = "100% lenh he thong - Khong ma doc"
+    MA_NGUON_MO = "Ma nguon mo - Minh bach"
+    KHONG_PHAT_HIEN_ADV = "Khong phat hien bat thuong nang cao nao"
+}
+$MsgEN = @{
+    SACH = "Safe"; KHONG_PHAT_HIEN = "Not detected"
+    DA_KICH_HOAT = "Activated"; CHUA_KICH_HOAT = "Not activated"
+    HE_THONG = "System"; BAN_QUYEN = "License"; FILE_CRACK = "Crack Files"
+    KET_QUA = "Result"; CHI_TIET = "Details"; CHUC_NANG = "Features"
+    THONG_TIN = "Information"; TRANG_THAI = "Status"
+    CAO = "HIGH"; TRUNG_BINH = "MEDIUM"; THAP = "LOW"
+    DANH_GIA = "Assessment"; DIEM = "points"
+    CO = "Yes"; KHONG = "No"
+    HE_DIEU_HANH = "Operating System"; BUILD = "Build"; CPU = "CPU"
+    RAM = "RAM"; O_DIA = "Disk"
+    PRODUCT_KEY = "Product Key"; KENH_BAN_QUYEN = "License Channel"; KEY_OEM = "OEM Key (BIOS)"
+    OFFICE = "Microsoft Office"; PHIEN_BAN = "Version"; CHUA_CAI_DAT = "Not installed"
+    PHAT_HIEN = "Detected"; VAN_DE = "issues found"; CRACK_PHAT_HIEN = "Clean - No crack traces found"
+    CANH_BAO_CRACK = "Crack detected!"; STARTUP_NGHI_VAN = "SUSPICIOUS FILES IN STARTUP/TASK"
+    DANG_QUET = "Scanning"; FILE_NGHI_VAN = "suspicious files found"
+    KHONG_FILE_CRACK = "No crack files found"
+    FILE_NGUY_HIEM = "HIGH RISK FILES DETECTED!"
+    REGISTRY_SAU = "REGISTRY DEEP"
+    BEHAVIORAL = "BEHAVIORAL (WMI / TOKEN / SERVICES)"
+    ADS = "ALTERNATE DATA STREAMS (ADS)"
+    KMS_SERVER = "KMS SERVER"
+    FORENSIC = "FORENSIC (PS HISTORY / EVENTLOG / HWID)"
+    CANH_BAO = "WARNING"
+    GO_BO = "REMOVING CRACK"
+    GO_BO_MO_TA = "This action will remove current key and crack traces."
+    GO_BO_OEM = "Without OEM key in BIOS, Windows will not be activated."
+    DA_DON_DEP = "Cleanup complete!"
+    KHOI_DONG_LAI = "Reboot to apply changes."
+    KHOI_PHUC_OEM = "RESTORING OEM KEY FROM BIOS"
+    OEM_KHONG_TIM_THAY = "No OEM key found in BIOS"
+    OEM_THANH_CONG = "OEM key restored successfully!"
+    DA_LUU = "Report saved"
+    CHUA_CO_DU_LIEU = "No data. Run [1] first."
+    NGUY_CO_CAO = "HIGH RISK"; RATING_WARN = "WARNING"; AN_TOAN = "SAFE"
+    NGUY_CO_CAO_MO_TA = "System has been cracked or may be cracked."
+    CANH_BAO_MO_TA = "Suspicious activity detected. Check details."
+    AN_TOAN_MO_TA = "No abnormalities found. System is clean."
+    RUI_RO = "SECURITY RISKS:"
+    BI_HACK = "System may be hacked, data may be stolen"
+    VIRUS = "Virus, malware, ransomware may be present"
+    KHONG_CAP_NHAT = "System won't receive security updates"
+    VI_PHAM = "Copyright infringement"
+    KHUYEN_NGHI = "RECOMMENDATION:"
+    GO_BO_CRACK = "Use [3] to remove Crack"
+    KHOI_PHUC_OEM_CRACK = "Use [4] to restore OEM Key"
+    CAI_DAT_LAI = "Install genuine Windows"
+    DUNG_DICH_VU = "Stopping services..."
+    XOA_KEY = "Removing key and KMS..."
+    XOA_SERVICE = "Removing crack services..."
+    XOA_TAC_VU = "Removing tasks..."
+    DON_REGISTRY = "Cleaning registry..."
+    KHOI_PHUC_HOSTS = "Restoring hosts file..."
+    CAI_KEY_OEM = "Installing OEM key..."
+    LIEN_HE_MS = "Contacting Microsoft to activate..."
+    XONG = "Done"
+    CHON_CHUC_NANG = "SELECT FUNCTION"
+    KIEM_TRA_TOAN_BO = "Full system check"
+    QUET_BAN_QUYEN = "License & Crack scan"
+    XUAT_HTML = "Export HTML report"
+    XUAT_TXT_JSON = "Export TXT + JSON report"
+    GIOI_THIEU = "About"
+    THOAT = "Exit"
+    TIEP_TUC = "Continue"
+    HUY = "Cancel"
+    QUAY_LAI = "Press any key to go back"
+    GIOI_THIEU_CHUC_NANG = @"
+    1. System info (CPU, RAM, Disk, OS)
+    2. Read Windows key from Registry and BIOS
+    3. License channel detection (Retail/OEM/MAK/KMS)
+    4. Crack trace detection (service, task, hosts)
+    5. Full drive crack file scan + Registry + Temp
+    6. Advanced detection (KMS, Forensic, WMI, AppInit, ADS)
+    7. Remove crack and restore OEM key
+    8. Export reports HTML / TXT / JSON
+"@
+    PHAN_TRAM = "100% system commands - No malware"
+    MA_NGUON_MO = "Open source - Transparent"
+    KHONG_PHAT_HIEN_ADV = "No advanced abnormalities detected"
+}
+$msg = if ($EN) { $MsgEN } else { $MsgVI }
+
 $ColorMap = @{
     P  = "DarkMagenta"
     M  = "Magenta"
@@ -54,7 +228,8 @@ function banner {
   ██║     ███████╗██║  ██║██║  ██║
   ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝
 "@ -ForegroundColor DarkMagenta
-    Write-Host "  KIEM TRA BAN QUYEN WINDOWS v1.0" -ForegroundColor Magenta
+    $t1 = if ($EN) { "WINDOWS LICENSE CHECKER v1.0" } else { "KIEM TRA BAN QUYEN WINDOWS v1.0" }
+    Write-Host "  $t1" -ForegroundColor Magenta
     Write-Host "  Full Edition" -ForegroundColor DarkMagenta
     Write-Host "  " -NoNewline; Write-Host ("-" * 44) -ForegroundColor DarkMagenta
     br
@@ -62,34 +237,35 @@ function banner {
 
 function Show-CrackWarning {
     param($Traces)
+    $w1 = if ($EN) { "LICENSE WARNING" } else { "CANH BAO BAN QUYEN" }
+    $w2 = if ($EN) { "YOUR COMPUTER IS USING" } else { "MAY TINH CUA BAN DANG SU DUNG WINDOWS" }
+    $w3 = if ($EN) { "NON-GENUINE WINDOWS (CRACK/HACK)!" } else { "KHONG HOP LE (CRACK/HACK)!" }
     Write-Host @"
 
   ================================================
-  $([char]0x26A0)$([char]0x26A0)$([char]0x26A0)  CANH BAO BAN QUYEN  $([char]0x26A0)$([char]0x26A0)$([char]0x26A0)
+  $([char]0x26A0)$([char]0x26A0)$([char]0x26A0)  $w1  $([char]0x26A0)$([char]0x26A0)$([char]0x26A0)
   ================================================
 "@ -ForegroundColor Red
-    Write-Host @"
-  MAY TINH CUA BAN DANG SU DUNG WINDOWS
-  KHONG HOP LE (CRACK/HACK)!
-"@ -ForegroundColor Yellow
+    Write-Host "  $w2" -ForegroundColor Yellow
+    Write-Host "  $w3" -ForegroundColor Yellow
     Write-Host "  ================================================" -ForegroundColor Red
     br
-    fe "  CHI TIET:" -Color R; br
+    fe "  $($msg.CHI_TIET):" -Color R; br
     foreach ($t in $traces) {
         fe "    $([char]0x2717) " -NoNewline -Color R
         fe "$($t.Type): $($t.D)" -Color Y; br
     }
     br
-    fe "  $([char]0x26A0)  RUI RO BAO MAT:" -Color R; br
-    fe "  - May tinh co the bi hack, danh cap du lieu" -Color W; br
-    fe "  - Virus, malware, ransomware an trong may" -Color W; br
-    fe "  - He thong khong nhan duoc ban cap nhat bao mat" -Color W; br
-    fe "  - Vi pham luat so huu tri tue" -Color W; br
+    fe "  $([char]0x26A0)  $($msg.RUI_RO)" -Color R; br
+    fe "  - $($msg.BI_HACK)" -Color W; br
+    fe "  - $($msg.VIRUS)" -Color W; br
+    fe "  - $($msg.KHONG_CAP_NHAT)" -Color W; br
+    fe "  - $($msg.VI_PHAM)" -Color W; br
     br
-    fe "  $([char]0x2713) KHUYEN NGHI:" -Color G; br
-    fe "  -> Dung chuc nang [3] de GO BO CRACK" -Color C; br
-    fe "  -> Dung chuc nang [4] de KHOI PHUC KEY OEM" -Color C; br
-    fe "  -> Cai dat lai Windows ban quyen chinh hang" -Color C; br
+    fe "  $([char]0x2713) $($msg.KHUYEN_NGHI)" -Color G; br
+    fe "  -> $($msg.GO_BO_CRACK)" -Color C; br
+    fe "  -> $($msg.KHOI_PHUC_OEM_CRACK)" -Color C; br
+    fe "  -> $($msg.CAI_DAT_LAI)" -Color C; br
     br
     fe "  ================================================" -Color R; br
 }
@@ -102,22 +278,30 @@ if (-not $isAdmin) {
   $([char]0x26A0)$([char]0x26A0)$([char]0x26A0)  CANH BAO: THIEU QUYEN ADMIN  $([char]0x26A0)$([char]0x26A0)$([char]0x26A0)
   ================================================
 "@ -ForegroundColor Red
-    Write-Host @"
-  FEAR Windows License Checker CAN QUYEN
-  Administrator de hoat dong dung cach!
-
-  Cac chuc nang can admin:
-  $([char]0x2717) Doc Product Key tu Registry
-  $([char]0x2717) Kiem tra Service/Task crack
-  $([char]0x2717) Quet file crack toan bo o dia
-  $([char]0x2717) Go bo crack va khoi phuc key OEM
-  $([char]0x2717) Xuat bao cao HTML
-
-"@ -ForegroundColor Yellow
+    $a1 = if ($EN) { "FEAR Windows License Checker requires" } else { "FEAR Windows License Checker CAN QUYEN" }
+    $a2 = if ($EN) { "Administrator privileges to function properly!" } else { "Administrator de hoat dong dung cach!" }
+    $a3 = if ($EN) { "Functions requiring admin:" } else { "Cac chuc nang can admin:" }
+    $a4 = if ($EN) { "Read Product Key from Registry" } else { "Doc Product Key tu Registry" }
+    $a5 = if ($EN) { "Scan crack Services/Tasks" } else { "Kiem tra Service/Task crack" }
+    $a6 = if ($EN) { "Full drive crack file scan" } else { "Quet file crack toan bo o dia" }
+    $a7 = if ($EN) { "Remove crack and restore OEM key" } else { "Go bo crack va khoi phuc key OEM" }
+    $a8 = if ($EN) { "Export HTML report" } else { "Xuat bao cao HTML" }
+    $a9 = if ($EN) { "Restart WITH ADMIN PRIVILEGES" } else { "Khoi dong lai VOI QUYEN ADMIN" }
+    $a10 = if ($EN) { "Exit" } else { "Thoat" }
+    Write-Host "  $a1" -ForegroundColor Yellow
+    Write-Host "  $a2" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "  $a3" -ForegroundColor Yellow
+    Write-Host "  $([char]0x2717) $a4" -ForegroundColor Yellow
+    Write-Host "  $([char]0x2717) $a5" -ForegroundColor Yellow
+    Write-Host "  $([char]0x2717) $a6" -ForegroundColor Yellow
+    Write-Host "  $([char]0x2717) $a7" -ForegroundColor Yellow
+    Write-Host "  $([char]0x2717) $a8" -ForegroundColor Yellow
+    Write-Host ""
     Write-Host "  ================================================" -ForegroundColor Red
     Write-Host ""
-    Write-Host "  [1] Khoi dong lai VOI QUYEN ADMIN" -ForegroundColor Green
-    Write-Host "  [2] Thoat" -ForegroundColor Red
+    Write-Host "  [1] $a9" -ForegroundColor Green
+    Write-Host "  [2] $a10" -ForegroundColor Red
     Write-Host ""
     $choice = Read-Host "  $([char]0x25B8) "
     if ($choice -eq "1") {
@@ -148,13 +332,13 @@ function Get-SystemInfo {
 
 function Show-SystemInfo {
     $si = Get-SystemInfo
-    fe "  $([char]0x25C6)  THONG TIN HE THONG" -Color M; br
+    fe "  $([char]0x25C6)  $($msg.HE_THONG)" -Color M; br
     hr; br
-    fei "He dieu hanh" "$($si.OS) ($($si.Arch))" C
-    fei "Build" $si.Build C
-    fei "CPU" $si.CPU C
-    fei "RAM" $si.RAM C
-    fei "O dia" $si.Disk C; br
+    fei $msg.HE_DIEU_HANH "$($si.OS) ($($si.Arch))" C
+    fei $msg.BUILD $si.Build C
+    fei $msg.CPU $si.CPU C
+    fei $msg.RAM $si.RAM C
+    fei $msg.O_DIA $si.Disk C; br
     return $si
 }
 
@@ -212,15 +396,15 @@ function Get-LicenseInfo {
 
 function Show-LicenseInfo {
     $lic = Get-LicenseInfo
-    fe "  $([char]0x2726)  THONG TIN BAN QUYEN" -Color M; br
+    fe "  $([char]0x2726)  $($msg.BAN_QUYEN)" -Color M; br
     hr; br
-    fe "  Trang thai " -NoNewline -Color Gr; fe ": " -NoNewline -Color Gr
-    if ($lic.Activated -eq "DA KICH HOAT") { fe "$([char]0x2713) Da kich hoat" -Color G } else { fe "$([char]0x2717) Chua kich hoat" -Color R }
+    fe "  $($msg.TRANG_THAI) " -NoNewline -Color Gr; fe ": " -NoNewline -Color Gr
+    if ($lic.Activated -eq "DA KICH HOAT") { fe "$([char]0x2713) $($msg.DA_KICH_HOAT)" -Color G } else { fe "$([char]0x2717) $($msg.CHUA_KICH_HOAT)" -Color R }
     br
-    fei "Product Key" $lic.FullPK Y
-    fei "Kenh ban quyen" $lic.Channel C
+    fei $msg.PRODUCT_KEY $lic.FullPK Y
+    fei $msg.KENH_BAN_QUYEN $lic.Channel C
     $bc = if ($lic.BIOS -ne "KHONG_TIM_THAY") { "G" } else { "Y" }
-    fei "Key OEM (BIOS)" $lic.BIOS $bc; br
+    fei $msg.KEY_OEM $lic.BIOS $bc; br
     return $lic
 }
 
@@ -242,13 +426,13 @@ function Get-OfficeStatus {
 
 function Show-OfficeInfo {
     $off = Get-OfficeStatus
-    fe "  $([char]0x2726)  MICROSOFT OFFICE" -Color M; br
+    fe "  $([char]0x2726)  $($msg.OFFICE)" -Color M; br
     hr; br
-    if (-not $off.Installed) { fe "  $([char]0x2717) Chua cai dat" -Color Y; br; return }
-    fe "  Trang thai " -NoNewline -Color Gr; fe ": " -NoNewline -Color Gr
-    if ($off.Activated -eq "DA KICH HOAT") { fe "$([char]0x2713) Da kich hoat" -Color G } else { fe "$([char]0x2717) Chua kich hoat" -Color R }
+    if (-not $off.Installed) { fe "  $([char]0x2717) $($msg.CHUA_CAI_DAT)" -Color Y; br; return }
+    fe "  $($msg.TRANG_THAI) " -NoNewline -Color Gr; fe ": " -NoNewline -Color Gr
+    if ($off.Activated -eq "DA KICH HOAT") { fe "$([char]0x2713) $($msg.DA_KICH_HOAT)" -Color G } else { fe "$([char]0x2717) $($msg.CHUA_KICH_HOAT)" -Color R }
     br
-    fei "Phien ban" $off.Version C; br
+    fei $msg.PHIEN_BAN $off.Version C; br
 }
 
 function Find-CrackTraces {
@@ -462,24 +646,31 @@ function Find-CrackFiles {
 
 function Show-CrackFiles {
     $files = Find-CrackFiles
-    fe "  $([char]0x2726)  KET QUA QUET FILE CRACK" -Color M; br
+    $h1 = if ($EN) { "CRACK FILE SCAN RESULTS" } else { "KET QUA QUET FILE CRACK" }
+    fe "  $([char]0x2726)  $h1" -Color M; br
     hr; br
     if ($files.Count -eq 0) {
-        fe "  $([char]0x2713) Khong tim thay file crack nao" -Color G; br
+        fe "  $([char]0x2713) $($msg.KHONG_FILE_CRACK)" -Color G; br
     } else {
-        fe "  $([char]0x26A0)  TIM THAY $($files.Count) FILE NGHI VAN!" -Color R; br
+        $f1 = if ($EN) { "FOUND $($files.Count) SUSPICIOUS FILES!" } else { "TIM THAY $($files.Count) FILE NGHI VAN!" }
+        fe "  $([char]0x26A0)  $f1" -Color R; br
         $cao = ($files | Where-Object { $_.Level -eq "CAO" }).Count
         $tb = ($files | Where-Object { $_.Level -eq "TRUNG_BINH" }).Count
         $cg = ($files | Where-Object { $_.Level -eq "CANH_GIAC" }).Count
         $thap = ($files | Where-Object { $_.Level -eq "THAP" }).Count
-        if ($cao -gt 0) { fe "    $([char]0x26A0) MUC DO CAO: $cao file" -Color R; br }
-        if ($tb -gt 0) { fe "    $([char]0x26A0) MUC DO TRUNG BINH: $tb file" -Color Y; br }
-        if ($cg -gt 0) { fe "    $([char]0x26A0) CANH GIAC (file moi trong Temp): $cg file" -Color Y; br }
-        if ($thap -gt 0) { fe "    $([char]0x2717) MUC DO THAP: $thap file" -Color Gr; br }
+        $lblCao = if ($EN) { "HIGH RISK:" } else { "MUC DO CAO:" }
+        $lblTb = if ($EN) { "MEDIUM:" } else { "MUC DO TRUNG BINH:" }
+        $lblCg = if ($EN) { "WATCH (new files in Temp):" } else { "CANH GIAC (file moi trong Temp):" }
+        $lblThap = if ($EN) { "LOW:" } else { "MUC DO THAP:" }
+        if ($cao -gt 0) { fe "    $([char]0x26A0) $lblCao $cao file" -Color R; br }
+        if ($tb -gt 0) { fe "    $([char]0x26A0) $lblTb $tb file" -Color Y; br }
+        if ($cg -gt 0) { fe "    $([char]0x26A0) $lblCg $cg file" -Color Y; br }
+        if ($thap -gt 0) { fe "    $([char]0x2717) $lblThap $thap file" -Color Gr; br }
         br
 
+        $lblDir = if ($EN) { "Directory:" } else { "Thu muc:" }
         $files | Where-Object { $_.Path } | Group-Object { try { Split-Path $_.Path -Parent -ErrorAction Stop } catch { "Registry" } } | ForEach-Object {
-            fe "  Thu muc: $($_.Name)" -Color Y; br
+            fe "  $lblDir $($_.Name)" -Color Y; br
             foreach ($f in $_.Group) {
                 $icon = if ($f.Level -eq "CAO") { "$([char]0x26A0) " } elseif ($f.Level -eq "TRUNG_BINH" -or $f.Level -eq "CANH_GIAC") { "$([char]0x26A0) " } else { "$([char]0x2717) " }
                 fe "    $icon" -NoNewline -Color $f.LColor
@@ -490,10 +681,16 @@ function Show-CrackFiles {
             br
         }
         if ($cao -gt 0) {
-            fe "  $([char]0x26A0)  PHAT HIEN FILE NGUY HIEM (MUC DO CAO)!" -Color R; br
-            fe "  -> Day la cac cong cu crack kich hoat Windows/Office" -Color R; br; br
+            $w1 = if ($EN) { "HIGH RISK FILES DETECTED!" } else { "PHAT HIEN FILE NGUY HIEM (MUC DO CAO)!" }
+            $w2 = if ($EN) { "These are crack tools for Windows/Office activation" } else { "Day la cac cong cu crack kich hoat Windows/Office" }
+            $w3 = if ($EN) { "Use [3] to remove crack traces" } else { "Dung chuc nang [3] de go bo dau vet Crack" }
+            fe "  $([char]0x26A0)  $w1" -Color R; br
+            fe "  -> $w2" -Color R; br; br
+            fe "  -> $w3" -Color C; br
+        } else {
+            $w3 = if ($EN) { "Use [3] to remove crack traces" } else { "Dung chuc nang [3] de go bo dau vet Crack" }
+            fe "  -> $w3" -Color C; br
         }
-        fe "  -> Dung chuc nang [3] de go bo dau vet Crack" -Color C; br
     }
     br; return $files
 }
@@ -627,31 +824,31 @@ function Show-CrackAdvanced {
     $total = $adv.Registry.Count + $adv.Behavioral.Count + $adv.ADS.Count + $adv.KMS.Count + $adv.Forensic.Count
 
     if ($adv.KMS.Count -gt 0) {
-        fe "  $([char]0x2726)  KMS SERVER" -Color M; br; hr; br
+        fe "  $([char]0x2726)  $($msg.KMS_SERVER)" -Color M; br; hr; br
         foreach ($i in $adv.KMS) { fe "    $([char]0x2717) " -NoNewline -Color $i.LColor; fe "$($i.Type): $($i.Detail)" -Color W; br }
         br
     }
     if ($adv.Forensic.Count -gt 0) {
-        fe "  $([char]0x2726)  FORENSIC (PS HISTORY / EVENTLOG / HWID)" -Color M; br; hr; br
+        fe "  $([char]0x2726)  $($msg.FORENSIC)" -Color M; br; hr; br
         foreach ($i in $adv.Forensic) { fe "    $([char]0x2717) " -NoNewline -Color $i.LColor; fe "$($i.Type): $($i.Detail)" -Color W; br }
         br
     }
     if ($adv.Registry.Count -gt 0) {
-        fe "  $([char]0x2726)  REGISTRY SAU" -Color M; br; hr; br
+        fe "  $([char]0x2726)  $($msg.REGISTRY_SAU)" -Color M; br; hr; br
         foreach ($i in $adv.Registry) { fe "    $([char]0x2717) " -NoNewline -Color $i.LColor; fe "$($i.Type): $($i.Detail)" -Color W; br }
         br
     }
     if ($adv.Behavioral.Count -gt 0) {
-        fe "  $([char]0x2726)  BEHAVIORAL (WMI / TOKEN / SERVICES)" -Color M; br; hr; br
+        fe "  $([char]0x2726)  $($msg.BEHAVIORAL)" -Color M; br; hr; br
         foreach ($i in $adv.Behavioral) { fe "    $([char]0x2717) " -NoNewline -Color $i.LColor; fe "$($i.Type): $($i.Detail)" -Color W; br }
         br
     }
     if ($adv.ADS.Count -gt 0) {
-        fe "  $([char]0x2726)  ALTERNATE DATA STREAMS (ADS)" -Color M; br; hr; br
+        fe "  $([char]0x2726)  $($msg.ADS)" -Color M; br; hr; br
         foreach ($i in $adv.ADS) { fe "    $([char]0x26A0) " -NoNewline -Color R; fe "$($i.Path)" -Color W; br }
         br
     }
-    if ($total -eq 0) { fe "  $([char]0x2713) Khong phat hien bat thuong nang cao nao" -Color G; br }
+    if ($total -eq 0) { fe "  $([char]0x2713) $($msg.KHONG_PHAT_HIEN_ADV)" -Color G; br }
     return $adv
 }
 
@@ -744,75 +941,88 @@ function Get-RiskRating {
     if ($Adv.Behavioral) { foreach ($i in $Adv.Behavioral) { if ($i.Level -eq "CAO") { $score += 2; $reasons += $i.Detail } } }
     if ($KmsFindings) { foreach ($k in $KmsFindings) { if ($k.Level -eq "CAO") { $score += 3; $reasons += "KMS: $($k.Detail)" } elseif ($k.Level -eq "TRUNG_BINH") { $score += 1 } } }
     if ($Forensic) { foreach ($f in $Forensic) { $score += 3; $reasons += $f.Detail } }
-    if ($score -ge 6) { return @{ Rating = "NGUY CO CAO"; Color = "R"; Desc = "Phat hien $score diem nguy co. He thong da bi crack hoac co the bi crack."; Score = $score } }
-    elseif ($score -ge 2) { return @{ Rating = "CANH BAO"; Color = "Y"; Desc = "Phat hien $score diem bat thuong. Can kiem tra chi tiet."; Score = $score } }
-    else { return @{ Rating = "AN TOAN"; Color = "G"; Desc = "Khong phat hien bat thuong. He thong sach."; Score = $score } }
+    $rCao = if ($EN) { "HIGH RISK" } else { "NGUY CO CAO" }
+    $rWarn = if ($EN) { "WARNING" } else { "CANH BAO" }
+    $rSafe = if ($EN) { "SAFE" } else { "AN TOAN" }
+    $dCao = if ($EN) { "Detected $score risk points. System has been cracked or may be cracked." } else { "Phat hien $score diem nguy co. He thong da bi crack hoac co the bi crack." }
+    $dWarn = if ($EN) { "Detected $score suspicious points. Check details." } else { "Phat hien $score diem bat thuong. Can kiem tra chi tiet." }
+    $dSafe = if ($EN) { "No abnormalities detected. System is clean." } else { "Khong phat hien bat thuong. He thong sach." }
+    if ($score -ge 6) { return @{ Rating = $rCao; Color = "R"; Desc = $dCao; Score = $score } }
+    elseif ($score -ge 2) { return @{ Rating = $rWarn; Color = "Y"; Desc = $dWarn; Score = $score } }
+    else { return @{ Rating = $rSafe; Color = "G"; Desc = $dSafe; Score = $score } }
 }
 
 function Show-CrackDetect {
     $traces = Find-CrackTraces
-    fe "  $([char]0x2726)  PHAT HIEN CRACK (HE THONG)" -Color M; br
+    $h1 = if ($EN) { "CRACK DETECTION (SYSTEM)" } else { "PHAT HIEN CRACK (HE THONG)" }
+    fe "  $([char]0x2726)  $h1" -Color M; br
     hr; br
     if ($traces.Count -eq 0) {
-        fe "  $([char]0x2713) He thong sach - Khong phat hien dau vet crack" -Color G; br
+        fe "  $([char]0x2713) $($msg.SACH)" -Color G; br
     } else {
-        fe "  $([char]0x26A0)  PHAT HIEN $($traces.Count) VAN DE!" -Color R; br
+        $v1 = if ($EN) { "DETECTED" } else { "PHAT HIEN" }
+        $v2 = if ($EN) { "issues" } else { "VAN DE" }
+        fe "  $([char]0x26A0)  $v1 $($traces.Count) $v2!" -Color R; br
         foreach ($t in $traces) {
             fe "    $([char]0x2717) " -NoNewline -Color R
             fe "$($t.Type)" -NoNewline -Color Y
             fe ": $($t.D)" -Color W; br
         }
         br
-        fe "  $([char]0x26A0) He thong co dau vet crack - De nghi kiem tra!" -Color R; br
-        fe "  -> Dung chuc nang [3] de go bo" -Color C; br
+        $w1 = if ($EN) { "System has crack traces - Check recommended!" } else { "He thong co dau vet crack - De nghi kiem tra!" }
+        $w2 = if ($EN) { "Use [3] to remove" } else { "Dung chuc nang [3] de go bo" }
+        fe "  $([char]0x26A0) $w1" -Color R; br
+        fe "  -> $w2" -Color C; br
     }
     br; return $traces
 }
 
 function Invoke-CrackCleanup {
-    fe "  $([char]0x26A0)  DANG GO BO CRACK" -Color Y; br; hr; br
-    fe "  $([char]0x2192) Dang dung dich vu..." -NoNewline -Color C
+    fe "  $([char]0x26A0)  $($msg.GO_BO)" -Color Y; br; hr; br
+    fe "  $([char]0x2192) $($msg.DUNG_DICH_VU)" -NoNewline -Color C
     Stop-Service -Name sppsvc -Force -ErrorAction SilentlyContinue; Stop-Service -Name osppsvc -Force -ErrorAction SilentlyContinue
-    fe " Xong" -Color G; br
-    fe "  $([char]0x2192) Dang xoa key va KMS..." -NoNewline -Color C
+    fe " $($msg.XONG)" -Color G; br
+    fe "  $([char]0x2192) $($msg.XOA_KEY)" -NoNewline -Color C
     cscript //Nologo $env:windir\system32\slmgr.vbs /upk | Out-Null; cscript //Nologo $env:windir\system32\slmgr.vbs /cpky | Out-Null; cscript //Nologo $env:windir\system32\slmgr.vbs /ckms | Out-Null; cscript //Nologo $env:windir\system32\slmgr.vbs /rearm | Out-Null
-    fe " Xong" -Color G; br
-    fe "  $([char]0x2192) Dang xoa service crack..." -NoNewline -Color C
+    fe " $($msg.XONG)" -Color G; br
+    fe "  $([char]0x2192) $($msg.XOA_SERVICE)" -NoNewline -Color C
     $cs = @("AutoKMS","KMSELDI","SppExtComObjHook","KMSAuto","KMSServerService","GenuineCheck")
     foreach ($s in $cs) { Stop-Service -Name $s -Force -ErrorAction SilentlyContinue; sc.exe delete $s | Out-Null }
-    fe " Xong" -Color G; br
-    fe "  $([char]0x2192) Dang xoa tac vu..." -NoNewline -Color C
+    fe " $($msg.XONG)" -Color G; br
+    fe "  $([char]0x2192) $($msg.XOA_TAC_VU)" -NoNewline -Color C
     foreach ($t in @("AutoKMS","AutoPico Daily Restart","KMSAutoNet","SvcRestartTask","Microsoft Activation")) { Unregister-ScheduledTask -TaskName $t -Confirm:$false -ErrorAction SilentlyContinue }
-    fe " Xong" -Color G; br
-    fe "  $([char]0x2192) Dang don registry..." -NoNewline -Color C
+    fe " $($msg.XONG)" -Color G; br
+    fe "  $([char]0x2192) $($msg.DON_REGISTRY)" -NoNewline -Color C
     $spp = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform"
     if (Test-Path $spp) { Remove-ItemProperty -Path $spp -Name "KeyManagementServiceName" -ErrorAction SilentlyContinue; Remove-ItemProperty -Path $spp -Name "KeyManagementServicePort" -ErrorAction SilentlyContinue }
-    fe " Xong" -Color G; br
-    fe "  $([char]0x2192) Dang khoi phuc hosts..." -NoNewline -Color C
+    fe " $($msg.XONG)" -Color G; br
+    fe "  $([char]0x2192) $($msg.KHOI_PHUC_HOSTS)" -NoNewline -Color C
     $hp = "$env:windir\System32\drivers\etc\hosts"
     if (Test-Path $hp) { Set-ItemProperty -Path $hp -Name Attributes -Value "Normal" -ErrorAction SilentlyContinue }
     "# Default Hosts File`r`n127.0.0.1 localhost" | Out-File $hp -Encoding ascii -Force
-    fe " Xong" -Color G; br; br
-    fe "  $([char]0x2713) Da don dep xong!" -Color G; br
-    fe "  $([char]0x26A0) Khoi dong lai may de ap dung." -Color Y; br
+    fe " $($msg.XONG)" -Color G; br; br
+    fe "  $([char]0x2713) $($msg.DA_DON_DEP)" -Color G; br
+    fe "  $([char]0x26A0) $($msg.KHOI_DONG_LAI)" -Color Y; br
 }
 
 function Invoke-OEMRestore {
-    fe "  $([char]0x2726)  KHOI PHUC KEY OEM TU BIOS" -Color M; br; hr; br
+    fe "  $([char]0x2726)  $($msg.KHOI_PHUC_OEM)" -Color M; br; hr; br
     $bios = "KHONG_TIM_THAY"
     try { $o = (Get-WmiObject -Query "select * from SoftwareLicensingService" -ErrorAction SilentlyContinue).OA3xOriginalProductKey; if ($o) { $bios = $o } } catch {}
-    if ($bios -eq "KHONG_TIM_THAY") { fe "  $([char]0x2717) Khong tim thay key OEM trong BIOS" -Color R; br; return $false }
-    fe "  $([char]0x2713) Tim thay key OEM: " -NoNewline -Color G; fe $bios -Color Y; br
-    fe "  $([char]0x2192) Dang cai key OEM..." -NoNewline -Color C
+    if ($bios -eq "KHONG_TIM_THAY") { fe "  $([char]0x2717) $($msg.OEM_KHONG_TIM_THAY)" -Color R; br; return $false }
+    $f1 = if ($EN) { "Found OEM key:" } else { "Tim thay key OEM:" }
+    fe "  $([char]0x2713) $f1 " -NoNewline -Color G; fe $bios -Color Y; br
+    fe "  $([char]0x2192) $($msg.CAI_KEY_OEM)" -NoNewline -Color C
     cscript //Nologo $env:windir\system32\slmgr.vbs /upk >$null 2>&1
     cscript //Nologo $env:windir\system32\slmgr.vbs /cpky >$null 2>&1
     cscript //Nologo $env:windir\system32\slmgr.vbs /ipk $bios >$null 2>&1
-    fe " Xong" -Color G; br
-    fe "  $([char]0x2192) Dang lien he Microsoft de kich hoat..." -NoNewline -Color C
+    fe " $($msg.XONG)" -Color G; br
+    fe "  $([char]0x2192) $($msg.LIEN_HE_MS)" -NoNewline -Color C
     cscript //Nologo $env:windir\system32\slmgr.vbs /ato >$null 2>&1
-    fe " Xong" -Color G; br; br
-    fe "  $([char]0x2713) Khoi phuc key OEM thanh cong!" -Color G; br
-    fe "  $([char]0x2192) Chay muc [1] de kiem tra lai." -Color C; br
+    fe " $($msg.XONG)" -Color G; br; br
+    $f2 = if ($EN) { "Run [1] to verify." } else { "Chay muc [1] de kiem tra lai." }
+    fe "  $([char]0x2713) $($msg.OEM_THANH_CONG)" -Color G; br
+    fe "  $([char]0x2192) $f2" -Color C; br
     return $true
 }
 
@@ -822,25 +1032,26 @@ function Export-HTMLReport {
     $desktop = [Environment]::GetFolderPath('Desktop')
     $path = Join-Path $desktop "FEAR_Report_$(Get-Date -Format yyyyMMdd_HHmmss).html"
     $color = if ($Traces.Count -eq 0) { "#22c55e" } else { "#ef4444" }
-    $status = if ($Traces.Count -eq 0) { "SACH" } else { "PHAT HIEN CRACK ($($Traces.Count) van de)" }
-    $acLabel = if ($Lic.Activated -eq "DA KICH HOAT") { "Da kich hoat" } else { "Chua kich hoat" }
+    $status = if ($Traces.Count -eq 0) { $msg.SACH } else { "$($msg.PHAT_HIEN) ($($Traces.Count) $($msg.VAN_DE))" }
+    $acLabel = if ($Lic.Activated -eq "DA KICH HOAT") { $msg.DA_KICH_HOAT } else { $msg.CHUA_KICH_HOAT }
     $acCol = if ($Lic.Activated -eq "DA KICH HOAT") { "g" } else { "r" }
     $biosCol = if ($Lic.BIOS -ne "KHONG_TIM_THAY") { "g" } else { "y" }
     $biosVal = $Lic.BIOS
     if ($Office.Installed) {
         $offCol = if ($Office.Activated -eq "DA KICH HOAT") { "g" } else { "r" }
-        $offAct = if ($Office.Activated -eq "DA KICH HOAT") { "Da kich hoat" } else { "Chua kich hoat" }
-        $officeHtml = '<div class="row"><span class="l">Phien ban</span><span class="v">' + $Office.Version + '</span></div><div class="row"><span class="l">Trang thai</span><span class="v ' + $offCol + '">' + $offAct + '</span></div>'
+        $offAct = if ($Office.Activated -eq "DA KICH HOAT") { $msg.DA_KICH_HOAT } else { $msg.CHUA_KICH_HOAT }
+        $officeHtml = '<div class="row"><span class="l">' + $msg.PHIEN_BAN + '</span><span class="v">' + $Office.Version + '</span></div><div class="row"><span class="l">' + $msg.TRANG_THAI + '</span><span class="v ' + $offCol + '">' + $offAct + '</span></div>'
     } else {
-        $officeHtml = '<div class="row"><span class="l">Trang thai</span><span class="v y">Chua cai dat</span></div>'
+        $officeHtml = '<div class="row"><span class="l">' + $msg.TRANG_THAI + '</span><span class="v y">' + $msg.CHUA_CAI_DAT + '</span></div>'
     }
-    $crackHtml = if ($Traces.Count -eq 0) { '<div class="row"><span class="l">Ket qua</span><span class="v g">Sach - khong co van de</span></div>' } else { "<div class='list'>" + ($Traces | ForEach-Object { "<div class='li'>$($_.Type): $($_.D)</div>" }) -join "`n" + "</div>" }
+    $r1 = if ($EN) { "Clean - No issues" } else { "Sach - khong co van de" }
+    $crackHtml = if ($Traces.Count -eq 0) { '<div class="row"><span class="l">' + $msg.KET_QUA + '</span><span class="v g">' + $r1 + '</span></div>' } else { "<div class='list'>" + ($Traces | ForEach-Object { "<div class='li'>$($_.Type): $($_.D)</div>" }) -join "`n" + "</div>" }
     if ($CrackFiles -and $CrackFiles.Count -gt 0) {
         $fileHtml = "<div class='list'>" + ($CrackFiles | ForEach-Object {
             $c = if ($_.Level -eq "CAO") { "#ef4444" } elseif ($_.Level -eq "TRUNG_BINH") { "#facc15" } else { "#6b7280" }
             "<div class='li' style='border-left-color:$c'><span style='color:$c;font-weight:600'>[$($_.Level)]</span> $($_.Name) <span style='color:#6b7280;font-size:11px'>$($_.Path)</span></div>"
         }) -join "`n" + "</div>"
-    } else { $fileHtml = '<div class="row"><span class="l">Ket qua</span><span class="v g">Khong tim thay file nghi van</span></div>' }
+    } else { $r2 = if ($EN) { "No suspicious files found" } else { "Khong tim thay file nghi van" }; $fileHtml = '<div class="row"><span class="l">' + $msg.KET_QUA + '</span><span class="v g">' + $r2 + '</span></div>' }
     if ($advancedFindings) {
         $allAdv = $advancedFindings.Registry + $advancedFindings.Behavioral + $advancedFindings.ADS + $advancedFindings.KMS + $advancedFindings.Forensic
         if ($allAdv.Count -gt 0) {
@@ -848,12 +1059,12 @@ function Export-HTMLReport {
                 $c = if ($_.Level -eq "CAO") { "#ef4444" } elseif ($_.Level -eq "TRUNG_BINH") { "#facc15" } else { "#6b7280" }
                 "<div class='li' style='border-left-color:$c'><span style='color:$c;font-weight:600'>[$($_.Level)]</span> $($_.Type): $($_.Detail)</div>"
             }) -join "`n" + "</div>"
-        } else { $advHtml = '<div class="row"><span class="l">Ket qua</span><span class="v g">Khong phat hien bat thuong</span></div>' }
-    } else { $advHtml = '<div class="row"><span class="l">Ket qua</span><span class="v g">Khong phat hien bat thuong</span></div>' }
+        } else { $r3 = if ($EN) { "No abnormalities found" } else { "Khong phat hien bat thuong" }; $advHtml = '<div class="row"><span class="l">' + $msg.KET_QUA + '</span><span class="v g">' + $r3 + '</span></div>' }
+    } else { $r3 = if ($EN) { "No abnormalities found" } else { "Khong phat hien bat thuong" }; $advHtml = '<div class="row"><span class="l">' + $msg.KET_QUA + '</span><span class="v g">' + $r3 + '</span></div>' }
 
 $html = @"
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="$(if($EN){'en'}else{'vi'})">
 <head><meta charset="UTF-8"><title>FEAR Report</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -879,36 +1090,36 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#08080
 </head>
 <body>
 <div class="container">
-<div class="top"><div><h1>FEAR - Bao cao ban quyen</h1><p>$(Get-Date -Format "dd/MM/yyyy HH:mm:ss")</p></div><div class="badge">$status</div></div>
+<div class="top"><div><h1>FEAR - $($msg.BAN_QUYEN)</h1><p>$(Get-Date -Format "dd/MM/yyyy HH:mm:ss")</p></div><div class="badge">$status</div></div>
 
-<div class="card"><h2>He thong</h2>
-<div class="row"><span class="l">He dieu hanh</span><span class="v">$($SysInfo.OS) ($($SysInfo.Arch))</span></div>
-<div class="row"><span class="l">Build</span><span class="v">$($SysInfo.Build)</span></div>
-<div class="row"><span class="l">CPU</span><span class="v">$($SysInfo.CPU)</span></div>
-<div class="row"><span class="l">RAM</span><span class="v">$($SysInfo.RAM)</span></div>
-<div class="row"><span class="l">O dia</span><span class="v">$($SysInfo.Disk)</span></div>
+<div class="card"><h2>$($msg.HE_THONG)</h2>
+<div class="row"><span class="l">$($msg.HE_DIEU_HANH)</span><span class="v">$($SysInfo.OS) ($($SysInfo.Arch))</span></div>
+<div class="row"><span class="l">$($msg.BUILD)</span><span class="v">$($SysInfo.Build)</span></div>
+<div class="row"><span class="l">$($msg.CPU)</span><span class="v">$($SysInfo.CPU)</span></div>
+<div class="row"><span class="l">$($msg.RAM)</span><span class="v">$($SysInfo.RAM)</span></div>
+<div class="row"><span class="l">$($msg.O_DIA)</span><span class="v">$($SysInfo.Disk)</span></div>
 </div>
 
-<div class="card"><h2>Ban quyen</h2>
-<div class="row"><span class="l">Product Key</span><span class="v">$($Lic.FullPK)</span></div>
-<div class="row"><span class="l">Kenh ban quyen</span><span class="v">$($Lic.Channel)</span></div>
-<div class="row"><span class="l">Trang thai</span><span class="v $acCol">$acLabel</span></div>
-<div class="row"><span class="l">Key OEM (BIOS)</span><span class="v $biosCol">$biosVal</span></div>
+<div class="card"><h2>$($msg.BAN_QUYEN)</h2>
+<div class="row"><span class="l">$($msg.PRODUCT_KEY)</span><span class="v">$($Lic.FullPK)</span></div>
+<div class="row"><span class="l">$($msg.KENH_BAN_QUYEN)</span><span class="v">$($Lic.Channel)</span></div>
+<div class="row"><span class="l">$($msg.TRANG_THAI)</span><span class="v $acCol">$acLabel</span></div>
+<div class="row"><span class="l">$($msg.KEY_OEM)</span><span class="v $biosCol">$biosVal</span></div>
 </div>
 
-<div class="card"><h2>Office</h2>
+<div class="card"><h2>$($msg.OFFICE)</h2>
 $officeHtml
 </div>
 
-<div class="card"><h2>Phat hien Crack</h2>
+<div class="card"><h2>$($msg.CANH_BAO_CRACK)</h2>
 $crackHtml
 </div>
 
-<div class="card"><h2>File Crack</h2>
+<div class="card"><h2>$($msg.FILE_CRACK)</h2>
 $fileHtml
 </div>
 
-<div class="card"><h2>Phat hien nang cao</h2>
+<div class="card"><h2>$($msg.PHAT_HIEN)</h2>
 $advHtml
 </div>
 
@@ -918,7 +1129,8 @@ $advHtml
 </html>
 "@
     $html | Out-File $path -Encoding utf8
-    fe "  $([char]0x2713) Da luu bao cao: $path" -Color G; br
+    $s1 = if ($EN) { "Report saved:" } else { "Da luu bao cao:" }
+    fe "  $([char]0x2713) $s1 $path" -Color G; br
     Start-Process $path
 }
 
@@ -926,46 +1138,54 @@ function Export-TextReport {
     param($SysInfo, $Lic, $Traces, $Office, $CrackFiles, $Advanced)
     $desktop = [Environment]::GetFolderPath('Desktop')
     $path = Join-Path $desktop "FEAR_Report_$(Get-Date -Format yyyyMMdd_HHmmss).txt"
+    $title = if ($EN) { "FEAR Windows License Checker - Report" } else { "FEAR Windows License Checker - Bao cao" }
+    $timeLabel = if ($EN) { "Time:" } else { "Thoi gian:" }
+    $s1 = if ($EN) { "--- SYSTEM INFORMATION ---" } else { "--- THONG TIN HE THONG ---" }
+    $s2 = if ($EN) { "--- LICENSE INFORMATION ---" } else { "--- THONG TIN BAN QUYEN ---" }
+    $s3 = if ($EN) { "--- CRACK DETECTIONS ---" } else { "--- PHAT HIEN CRACK ---" }
+    $s4 = if ($EN) { "--- CRACK FILES ---" } else { "--- FILE CRACK ---" }
+    $nd = if ($EN) { "Not found" } else { "Khong tim thay" }
     $lines = @()
     $lines += "================================================"
-    $lines += " FEAR Windows License Checker - Bao cao"
-    $lines += " Thoi gian: $(Get-Date -Format 'dd/MM/yyyy HH:mm:ss')"
+    $lines += " $title"
+    $lines += " $timeLabel $(Get-Date -Format 'dd/MM/yyyy HH:mm:ss')"
     $lines += "================================================"
     $lines += ""
-    $lines += "--- THONG TIN HE THONG ---"
+    $lines += $s1
     $lines += " OS: $($SysInfo.OS) ($($SysInfo.Arch))"
     $lines += " Build: $($SysInfo.Build)"
     $lines += " CPU: $($SysInfo.CPU)"
     $lines += " RAM: $($SysInfo.RAM)"
-    $lines += " O dia: $($SysInfo.Disk)"
+    $lines += " Disk: $($SysInfo.Disk)"
     $lines += ""
-    $lines += "--- THONG TIN BAN QUYEN ---"
+    $lines += $s2
     $lines += " Product Key: $($Lic.FullPK)"
-    $lines += " Kenh ban quyen: $($Lic.Channel)"
-    $lines += " Trang thai: $(if($Lic.Activated -eq 'DA KICH HOAT'){'Da kich hoat'}else{'Chua kich hoat'})"
-    $lines += " Key OEM (BIOS): $($Lic.BIOS)"
+    $lines += " $($msg.KENH_BAN_QUYEN): $($Lic.Channel)"
+    $lines += " $($msg.TRANG_THAI): $(if($Lic.Activated -eq 'DA KICH HOAT'){$msg.DA_KICH_HOAT}else{$msg.CHUA_KICH_HOAT})"
+    $lines += " $($msg.KEY_OEM): $($Lic.BIOS)"
     $lines += ""
     if ($Office.Installed) {
         $lines += "--- MICROSOFT OFFICE ---"
-        $lines += " Phien ban: $($Office.Version)"
-        $lines += " Trang thai: $(if($Office.Activated -eq 'DA KICH HOAT'){'Da kich hoat'}else{'Chua kich hoat'})"
+        $lines += " $($msg.PHIEN_BAN): $($Office.Version)"
+        $lines += " $($msg.TRANG_THAI): $(if($Office.Activated -eq 'DA KICH HOAT'){$msg.DA_KICH_HOAT}else{$msg.CHUA_KICH_HOAT})"
         $lines += ""
     }
-    $lines += "--- PHAT HIEN CRACK ---"
-    if ($Traces.Count -eq 0) { $lines += " Sach - Khong phat hien" } else { foreach ($t in $Traces) { $lines += " [X] $($t.Type): $($t.D)" } }
+    $lines += $s3
+    if ($Traces.Count -eq 0) { $lines += " $($msg.SACH)" } else { foreach ($t in $Traces) { $lines += " [X] $($t.Type): $($t.D)" } }
     $lines += ""
     if ($Advanced) {
-        if ($Advanced.KMS.Count -gt 0) { $lines += "--- KMS SERVER ---"; foreach ($k in $Advanced.KMS) { $lines += " [X] $($k.Detail)" }; $lines += "" }
-        if ($Advanced.Forensic.Count -gt 0) { $lines += "--- FORENSIC ---"; foreach ($f in $Advanced.Forensic) { $lines += " [X] $($f.Type): $($f.Detail)" }; $lines += "" }
-        if ($Advanced.Registry.Count -gt 0) { $lines += "--- REGISTRY SAU ---"; foreach ($r in $Advanced.Registry) { $lines += " [$($r.Level)] $($r.Type): $($r.Detail)" }; $lines += "" }
-        if ($Advanced.Behavioral.Count -gt 0) { $lines += "--- BEHAVIORAL ---"; foreach ($b in $Advanced.Behavioral) { $lines += " [$($b.Level)] $($b.Type): $($b.Detail)" }; $lines += "" }
+        if ($Advanced.KMS.Count -gt 0) { $lines += "--- $($msg.KMS_SERVER) ---"; foreach ($k in $Advanced.KMS) { $lines += " [X] $($k.Detail)" }; $lines += "" }
+        if ($Advanced.Forensic.Count -gt 0) { $lines += "--- $($msg.FORENSIC) ---"; foreach ($f in $Advanced.Forensic) { $lines += " [X] $($f.Type): $($f.Detail)" }; $lines += "" }
+        if ($Advanced.Registry.Count -gt 0) { $lines += "--- $($msg.REGISTRY_SAU) ---"; foreach ($r in $Advanced.Registry) { $lines += " [$($r.Level)] $($r.Type): $($r.Detail)" }; $lines += "" }
+        if ($Advanced.Behavioral.Count -gt 0) { $lines += "--- $($msg.BEHAVIORAL) ---"; foreach ($b in $Advanced.Behavioral) { $lines += " [$($b.Level)] $($b.Type): $($b.Detail)" }; $lines += "" }
     }
-    $lines += "--- FILE CRACK ---"
-    if ($CrackFiles.Count -eq 0) { $lines += " Khong tim thay" } else { foreach ($f in $CrackFiles) { $lines += " [$($f.Level)] $($f.Name) - $($f.Path)" } }
+    $lines += $s4
+    if ($CrackFiles.Count -eq 0) { $lines += " $nd" } else { foreach ($f in $CrackFiles) { $lines += " [$($f.Level)] $($f.Name) - $($f.Path)" } }
     $lines += ""
     $lines += "================================================"
     $lines | Out-File $path -Encoding utf8
-    fe "  $([char]0x2713) Da luu bao cao TXT: $path" -Color G; br
+    $s1 = if ($EN) { "TXT report saved:" } else { "Da luu bao cao TXT:" }
+    fe "  $([char]0x2713) $s1 $path" -Color G; br
     notepad $path
 }
 
@@ -983,23 +1203,20 @@ function Export-JsonReport {
         CrackFiles = $CrackFiles | ForEach-Object { @{ Name = $_.Name; Path = $_.Path; Level = $_.Level; Size = $_.Size; Modified = $_.Modified } }
     }
     $report | ConvertTo-Json -Depth 6 | Out-File $path -Encoding utf8
-    fe "  $([char]0x2713) Da luu bao cao JSON: $path" -Color G; br
+    $s1 = if ($EN) { "JSON report saved:" } else { "Da luu bao cao JSON:" }
+    fe "  $([char]0x2713) $s1 $path" -Color G; br
 }
 
 function Show-About {
     br
-    fe "  $([char]0x2726)  GIOI THIEU" -Color M; br; hr; br
-    fe "  $([char]0x2726) Chuc nang:" -Color C; br
-    fe "    1. Quet thong tin he thong (CPU, RAM, o dia, OS)" -Color Gr; br
-    fe "    2. Doc key Windows tu Registry va BIOS" -Color Gr; br
-    fe "    3. Xac dinh kenh ban quyen (Retail/OEM/MAK/KMS)" -Color Gr; br
-    fe "    4. Phat hien dau vet crack (service, tac vu, hosts)" -Color Gr; br
-    fe "    5. Quet file crack toan bo o dia + Registry + Temp" -Color Gr; br
-    fe "    6. Phat hien nang cao (KMS, Forensic, WMI, AppInit, ADS)" -Color Gr; br
-    fe "    7. Go bo crack va khoi phuc key OEM" -Color Gr; br
-    fe "    8. Xuat bao cao HTML / TXT / JSON" -Color Gr; br; br
-    fe "  $([char]0x2726) 100% lenh he thong - Khong ma doc" -Color C; br
-    fe "  $([char]0x2726) Ma nguon mo - Minh bach" -Color C; br; br
+    $t = if ($EN) { "ABOUT" } else { "GIOI THIEU" }
+    $f = if ($EN) { "Features:" } else { "Chuc nang:" }
+    fe "  $([char]0x2726)  $t" -Color M; br; hr; br
+    fe "  $([char]0x2726) $f" -Color C; br
+    $msg.GIOI_THIEU_CHUC_NANG -split "`n" | ForEach-Object { fe "  $_" -Color Gr; br }
+    br
+    fe "  $([char]0x2726) $($msg.PHAN_TRAM)" -Color C; br
+    fe "  $([char]0x2726) $($msg.MA_NGUON_MO)" -Color C; br; br
 }
 
 $state = "MENU"
@@ -1009,16 +1226,19 @@ while ($state -ne "EXIT") {
     switch ($state) {
         "MENU" {
             banner
-            fe "  CHON CHUC NANG" -Color M; br; hr; br
-            fe "  " -NoNewline; fe "[1]" -NoNewline -Color M; fe "  Kiem tra toan bo he thong" -Color W; br
-            fe "  " -NoNewline; fe "[2]" -NoNewline -Color M; fe "  Quet ban quyen & Crack" -Color W; br
-            fe "  " -NoNewline; fe "[3]" -NoNewline -Color M; fe "  Go bo Crack" -Color W; br
-            fe "  " -NoNewline; fe "[4]" -NoNewline -Color M; fe "  Khoi phuc Key OEM" -Color W; br
-            fe "  " -NoNewline; fe "[5]" -NoNewline -Color M; fe "  Quet file Crack (toan bo o dia)" -Color W; br
-            fe "  " -NoNewline; fe "[6]" -NoNewline -Color M; fe "  Xuat bao cao HTML" -Color W; br
-            fe "  " -NoNewline; fe "[7]" -NoNewline -Color M; fe "  Xuat bao cao TXT + JSON" -Color W; br
-            fe "  " -NoNewline; fe "[8]" -NoNewline -Color M; fe "  Gioi thieu" -Color W; br
-            fe "  " -NoNewline; fe "[9]" -NoNewline -Color M; fe "  Thoat" -Color W; br; br
+            $gr = if ($EN) { "Remove Crack" } else { "Go bo Crack" }
+            $oem = if ($EN) { "Restore OEM Key" } else { "Khoi phuc Key OEM" }
+            $fscan = if ($EN) { "Scan Crack Files (full drive)" } else { "Quet file Crack (toan bo o dia)" }
+            fe "  $($msg.CHON_CHUC_NANG)" -Color M; br; hr; br
+            fe "  " -NoNewline; fe "[1]" -NoNewline -Color M; fe "  $($msg.KIEM_TRA_TOAN_BO)" -Color W; br
+            fe "  " -NoNewline; fe "[2]" -NoNewline -Color M; fe "  $($msg.QUET_BAN_QUYEN)" -Color W; br
+            fe "  " -NoNewline; fe "[3]" -NoNewline -Color M; fe "  $gr" -Color W; br
+            fe "  " -NoNewline; fe "[4]" -NoNewline -Color M; fe "  $oem" -Color W; br
+            fe "  " -NoNewline; fe "[5]" -NoNewline -Color M; fe "  $fscan" -Color W; br
+            fe "  " -NoNewline; fe "[6]" -NoNewline -Color M; fe "  $($msg.XUAT_HTML)" -Color W; br
+            fe "  " -NoNewline; fe "[7]" -NoNewline -Color M; fe "  $($msg.XUAT_TXT_JSON)" -Color W; br
+            fe "  " -NoNewline; fe "[8]" -NoNewline -Color M; fe "  $($msg.GIOI_THIEU)" -Color W; br
+            fe "  " -NoNewline; fe "[9]" -NoNewline -Color M; fe "  $($msg.THOAT)" -Color W; br; br
             $c = Read-Host "  $([char]0x25B8) "
             switch ($c) {
                 "1" { $state = "FULL_CHECK" }
@@ -1043,23 +1263,26 @@ while ($state -ne "EXIT") {
             $gFiles = Show-CrackFiles
             $startupFiles = Find-CrackStartup
             if ($startupFiles.Count -gt 0) {
-                fe "  $([char]0x26A0)  FILE NGHI VAN TRONG STARTUP/TASK:" -Color R; br
+                fe "  $([char]0x26A0)  $($msg.STARTUP_NGHI_VAN):" -Color R; br
                 foreach ($sf in $startupFiles) {
                     fe "    $([char]0x2717) $($sf.Name)" -Color Y; br
                 }
                 br
             }
             $rating = Get-RiskRating -Traces $gTraces -Adv $gAdv -Files $gFiles -KmsFindings ($gAdv.KMS) -Forensic ($gAdv.Forensic)
-            fe "  $([char]0x2726)  DANH GIA MUC DO RUI RO" -Color M; br; hr; br
-            fe "  Ket qua: " -NoNewline -Color Gr
-            fe "$($rating.Rating) ($($rating.Score) diem)" -Color $rating.Color; br
+            $rHead = if ($EN) { "RISK ASSESSMENT" } else { "DANH GIA MUC DO RUI RO" }
+            $rLabel = if ($EN) { "Result:" } else { "Ket qua:" }
+            $rPoint = if ($EN) { "points" } else { "diem" }
+            fe "  $([char]0x2726)  $rHead" -Color M; br; hr; br
+            fe "  $rLabel " -NoNewline -Color Gr
+            fe "$($rating.Rating) ($($rating.Score) $rPoint)" -Color $rating.Color; br
             fe "  $($rating.Desc)" -Color Gr; br; br
-            br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
+            br; fe "  $([char]0x2190) $($msg.QUAY_LAI)" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
         "FILE_SCAN" {
             banner
             $gFiles = Show-CrackFiles
-            br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
+            br; fe "  $([char]0x2190) $($msg.QUAY_LAI)" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
         "CRACK_SCAN" {
             banner
@@ -1069,45 +1292,48 @@ while ($state -ne "EXIT") {
             if ($gTraces.Count -gt 0) { Show-CrackWarning -Traces $gTraces }
             $gAdv = Show-CrackAdvanced
             $rating = Get-RiskRating -Traces $gTraces -Adv $gAdv -Files @() -KmsFindings ($gAdv.KMS) -Forensic ($gAdv.Forensic)
-            fe "  $([char]0x2726)  DANH GIA MUC DO RUI RO" -Color M; br; hr; br
-            fe "  Ket qua: " -NoNewline -Color Gr
-            fe "$($rating.Rating) ($($rating.Score) diem)" -Color $rating.Color; br
+            $rHead = if ($EN) { "RISK ASSESSMENT" } else { "DANH GIA MUC DO RUI RO" }
+            $rLabel = if ($EN) { "Result:" } else { "Ket qua:" }
+            $rPoint = if ($EN) { "points" } else { "diem" }
+            fe "  $([char]0x2726)  $rHead" -Color M; br; hr; br
+            fe "  $rLabel " -NoNewline -Color Gr
+            fe "$($rating.Rating) ($($rating.Score) $rPoint)" -Color $rating.Color; br
             fe "  $($rating.Desc)" -Color Gr; br; br
-            br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
+            br; fe "  $([char]0x2190) $($msg.QUAY_LAI)" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
         "CLEANUP" {
             banner
-            fe "  $([char]0x26A0)  CANH BAO" -Color Y; br; hr; br
-            fe "  Dong tac nay se xoa key hien tai va dau vet crack." -Color W; br
-            fe "  Neu khong co key OEM trong BIOS, Windows se chua kich hoat." -Color W; br; br
-            fe "  " -NoNewline; fe "[1]" -NoNewline -Color R; fe "  Tiep tuc" -Color W; br
-            fe "  " -NoNewline; fe "[2]" -NoNewline -Color M; fe "  Huy" -Color W; br; br
+            fe "  $([char]0x26A0)  $($msg.CANH_BAO)" -Color Y; br; hr; br
+            fe "  $($msg.GO_BO_MO_TA)" -Color W; br
+            fe "  $($msg.GO_BO_OEM)" -Color W; br; br
+            fe "  " -NoNewline; fe "[1]" -NoNewline -Color R; fe "  $($msg.TIEP_TUC)" -Color W; br
+            fe "  " -NoNewline; fe "[2]" -NoNewline -Color M; fe "  $($msg.HUY)" -Color W; br; br
             if ((Read-Host "  $([char]0x25B8) ") -eq "1") { banner; Invoke-CrackCleanup }
-            br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
+            br; fe "  $([char]0x2190) $($msg.QUAY_LAI)" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
         "RESTORE" {
             banner
             Invoke-OEMRestore
-            br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
+            br; fe "  $([char]0x2190) $($msg.QUAY_LAI)" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
         "EXPORT" {
             banner
-            if (-not $gSys) { fe "  $([char]0x2717) Chua co du lieu. Chay muc [1] truoc." -Color Y; br }
+            if (-not $gSys) { fe "  $([char]0x2717) $($msg.CHUA_CO_DU_LIEU)" -Color Y; br }
             else { Export-HTMLReport -SysInfo $gSys -Lic $gLic -Traces $gTraces -Office $gOff -CrackFiles $gFiles -Advanced $gAdv }
-            br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
+            br; fe "  $([char]0x2190) $($msg.QUAY_LAI)" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
         "EXPORT_TXT_JSON" {
             banner
-            if (-not $gSys) { fe "  $([char]0x2717) Chua co du lieu. Chay muc [1] truoc." -Color Y; br }
+            if (-not $gSys) { fe "  $([char]0x2717) $($msg.CHUA_CO_DU_LIEU)" -Color Y; br }
             else {
                 Export-TextReport -SysInfo $gSys -Lic $gLic -Traces $gTraces -Office $gOff -CrackFiles $gFiles -Advanced $gAdv
                 Export-JsonReport -SysInfo $gSys -Lic $gLic -Traces $gTraces -Office $gOff -CrackFiles $gFiles -Advanced $gAdv
             }
-            br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
+            br; fe "  $([char]0x2190) $($msg.QUAY_LAI)" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
         "ABOUT" {
             banner; Show-About
-            br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
+            br; fe "  $([char]0x2190) $($msg.QUAY_LAI)" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
     }
 }
