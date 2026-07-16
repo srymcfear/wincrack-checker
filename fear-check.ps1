@@ -278,13 +278,13 @@ function Find-CrackTraces {
 function Get-CrackRiskLevel {
     param($Name)
     $n = $Name.ToLower()
-    if ($n -match '(kms[\W]|hwid[\W]|removewat|sppextcomobj|ezactivat|genuineticket|gatherosstate|microsoftpid|tokenhelper|creamapi|smartsteam|digitallicense|autopico|kmspico|microsoft.*toolkit|securityhealth.*host|sppsvc.*hook|mas[\W]|keygen\.exe|loader\.exe|injector\.exe)') {
+    if ($n -match '(kms[\W]|hwid[\W]|removewat|sppextcomobj|ezactivat|genuineticket|gatherosstate|microsoftpid|tokenhelper|creamapi|smartsteam|digitallicense|autopico|kmspico|microsoft.*toolkit|securityhealth.*host|sppsvc.*hook|mas[\W]|keygen\.exe|loader\.exe|injector\.exe|tsforge|heu.?kms|chew.*wga|antiwpa|cmwtat|kms365|kms.?matrix|giga.*kms|smokey.*kms|ab.?commander|genuine.*advantage|w10.*activ|w11.*activ|daz.*loader|windows.*loader.*\.exe|s.*microsoft|medic.*(window|office)|digital.*activation|token.*activation)') {
         return @{ Level = "CAO"; Color = "R" }
     }
-    if ($n -match '(crack|patch.*\.exe|activ.*or|codex|cpy|flt|plaza|ali213|rune|tenoke|razor1911|fairlight|steam_api.*\.dll|emu\.dll|bypass|unlocker|hook.*\.dll|windivert|gameoverlay.*\.dll|ddraw\.dll)') {
+    if ($n -match '(crack|patch.*\.exe|activ.*or|codex|cpy|flt|plaza|ali213|rune|tenoke|razor1911|fairlight|steam_api.*\.dll|emu\.dll|bypass|unlocker|hook.*\.dll|windivert|gameoverlay.*\.dll|ddraw\.dll|\.hta$|\.js$|\.wsf$|\.scr$|\.com$|waloader|chew.*wgat)') {
         return @{ Level = "TRUNG_BINH"; Color = "Y" }
     }
-    if ($n -match '(\.exe$|\.dll$|\.vbs$|\.ps1$|\.cmd$|\.bat$|\.jar$)') {
+    if ($n -match '(\.exe$|\.dll$|\.vbs$|\.ps1$|\.cmd$|\.bat$|\.jar$|\.scr$|\.com$)') {
         return @{ Level = "THAP"; Color = "Gr" }
     }
     return @{ Level = "THAP"; Color = "Gr" }
@@ -308,8 +308,16 @@ function Find-CrackFiles {
         "*Razor1911*", "*FairLight*", "*Patcher*",
         "*DLLInjector*", "*TokenHelper*", "*DigitalLicense*",
         "*SecurityHealth*Host*", "*sppsvc*",
-        "*crack*", "*patch*"
+        "*crack*", "*patch*",
+        "*TSforge*", "*HEU*KMS*", "*Chew*WGA*", "*AntiWPA*",
+        "*CMWTAT*", "*KMS365*", "*KMS*Matrix*", "*GIGA*KMS*",
+        "*Smokey*", "*AB*Commander*", "*WGA*",
+        "*Windows*Loader*", "*DAZ*Loader*",
+        "*Digital*Activation*", "*Token*Activation*",
+        "*Medic*Window*", "*Medic*Office*",
+        "*S*Microsoft*", "*waloader*"
     )
+    $extKw = @("*.hta", "*.wsf", "*.scr", "*.com")
     $gameDirs = @("Games", "Game", "Programs", "Download", "Downloads", "Software", "Tool", "Tools", "Crack", "Cracks")
 
     $drives = Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -eq 3 } | ForEach-Object { $_.DeviceID }
@@ -361,6 +369,26 @@ function Find-CrackFiles {
                     }
                 }
             } catch {}
+        }
+    }
+
+    if ($files.Count -lt $limit) {
+        Write-Progress -Activity "Quet file Crack toan bo o dia" -Status "Dang quet file mo rong (.hta .wsf .scr .com)..." -PercentComplete 85
+        foreach ($t in $scanTargets) {
+            if ($files.Count -ge $limit) { break }
+            if (-not (Test-Path $t.Path)) { continue }
+            foreach ($ex in $extKw) {
+                if ($files.Count -ge $limit) { break }
+                try {
+                    $d2 = if ($t.Depth -ge 99) { $null } else { $t.Depth }
+                    $found = Get-ChildItem $t.Path -Filter $ex -Recurse -ErrorAction SilentlyContinue -Depth $d2 -File | Where-Object { $_.Name -match '(?i)(crack|activ|patch|keygen|loader|injector|emu|kms|hwid)' } | Select-Object -First 5
+                    foreach ($f in $found) {
+                        if (-not $f.FullName) { continue }
+                        $rl = Get-CrackRiskLevel -Name $f.Name
+                        $files += @{ Path = $f.FullName; Name = $f.Name; Size = ""; Modified = $f.LastWriteTime.ToString("dd/MM/yyyy"); Level = $rl.Level; LColor = $rl.Color; Created = $f.CreationTime.ToString("dd/MM/yyyy") }
+                    }
+                } catch {}
+            }
         }
     }
 
@@ -475,6 +503,143 @@ function Find-CrackStartup {
     return $files
 }
 
+function Find-CrackRegistryDeep {
+    $issues = @()
+    $checks = @(
+        @{ Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"; Prop = "Userinit"; Desc = "Winlogon Userinit"; Good = "userinit.exe" }
+        @{ Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"; Prop = "Shell"; Desc = "Winlogon Shell"; Good = "explorer.exe" }
+        @{ Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager"; Prop = "AppInit_DLLs"; Desc = "AppInit_DLLs"; Good = "" }
+        @{ Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ShellServiceObjectDelayLoad"; Prop = $null; Desc = "ShellServiceObjectDelayLoad"; Good = "" }
+        @{ Path = "HKLM:\SYSTEM\CurrentControlSet\Services\sppsvc"; Prop = "Start"; Desc = "sppsvc (SPP)"; Good = "2" }
+        @{ Path = "HKLM:\SYSTEM\CurrentControlSet\Services\osppsvc"; Prop = "Start"; Desc = "osppsvc (Office SPP)"; Good = "2" }
+        @{ Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update"; Prop = "AUOptions"; Desc = "Windows Update"; Good = "" }
+    )
+    foreach ($c in $checks) {
+        try {
+            if (-not (Test-Path $c.Path)) { continue }
+            $val = if ($c.Prop -and $c.Prop -eq $null) { Get-Item $c.Path -ErrorAction Stop } else { (Get-ItemProperty $c.Path -ErrorAction Stop).$($c.Prop) }
+            if ($c.Prop -eq $null) {
+                $props = (Get-ItemProperty $c.Path).PSObject.Properties | Where-Object { $_.Name -notmatch '^PSPath|PSParentPath|PSChildName|PSDrive|PSProvider' }
+                if ($props.Count -gt 0) { $issues += @{ Type = $c.Desc; Detail = "$($c.Path) co $($props.Count) entries"; Level = "TRUNG_BINH"; LColor = "Y" } }
+            } elseif ($c.Prop -eq "Userinit") {
+                if ($val -notmatch '^C:\\Windows\\system32\\userinit\.exe,?$') { $issues += @{ Type = $c.Desc; Detail = "Userinit = $val"; Level = "CAO"; LColor = "R" } }
+            } elseif ($c.Prop -eq "Shell") {
+                if ($val -notmatch '^explorer\.exe$') { $issues += @{ Type = $c.Desc; Detail = "Shell = $val"; Level = "CAO"; LColor = "R" } }
+            } elseif ($c.Prop -eq "AppInit_DLLs") {
+                if (-not [string]::IsNullOrEmpty($val)) { $issues += @{ Type = $c.Desc; Detail = "AppInit_DLLs = $val"; Level = "CAO"; LColor = "R" } }
+            } elseif ($c.Prop -eq "Start") {
+                if ($val -ne "2") { $issues += @{ Type = $c.Desc; Detail = "Start type = $val (phai la 2-Auto)"; Level = "CAO"; LColor = "R" } }
+            } elseif ($c.Prop -eq "AUOptions") {
+                if ($val -eq 1) { $issues += @{ Type = $c.Desc; Detail = "Windows Update bi tat (AUOptions=1)"; Level = "TRUNG_BINH"; LColor = "Y" } }
+            } elseif ($val -and $val -ne $c.Good) {
+                $issues += @{ Type = $c.Desc; Detail = "$($c.Prop) = $val"; Level = "CAO"; LColor = "R" }
+            }
+        } catch {}
+    }
+    try {
+        $wu = Get-Service wuauserv -ErrorAction SilentlyContinue
+        if ($wu -and $wu.StartType -ne "Automatic") { $issues += @{ Type = "Windows Update Service"; Detail = "wuauserv StartType = $($wu.StartType)"; Level = "TRUNG_BINH"; LColor = "Y" } }
+    } catch {}
+    return $issues
+}
+
+function Find-CrackBehavioral {
+    $issues = @()
+    try {
+        $wmiFilters = Get-WmiObject -Namespace root\subscription -Class __EventFilter -ErrorAction SilentlyContinue
+        foreach ($f in $wmiFilters) { $issues += @{ Type = "WMI EventFilter"; Detail = "$($f.Name): $($f.Query)"; Level = "CAO"; LColor = "R" } }
+    } catch {}
+    try {
+        $wmiConsumers = Get-WmiObject -Namespace root\subscription -Class __EventConsumer -ErrorAction SilentlyContinue
+        foreach ($c in $wmiConsumers) { $issues += @{ Type = "WMI EventConsumer"; Detail = "$($c.Name): $($c.__CLASS)"; Level = "CAO"; LColor = "R" } }
+    } catch {}
+    try {
+        $bindings = Get-WmiObject -Namespace root\subscription -Class __FilterToConsumerBinding -ErrorAction SilentlyContinue
+        foreach ($b in $bindings) { $issues += @{ Type = "WMI Binding"; Detail = "$($b.Filter) -> $($b.Consumer)"; Level = "CAO"; LColor = "R" } }
+    } catch {}
+    try {
+        $tokenDir = "$env:windir\System32\spp\store\2.0"
+        if (Test-Path $tokenDir) {
+            $tokens = Get-ChildItem $tokenDir -File -ErrorAction SilentlyContinue
+            $recent = $tokens | Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-30) }
+            if ($recent.Count -gt 0) { $issues += @{ Type = "Token Store"; Detail = "$($tokens.Count) token files, $($recent.Count) file sua trong 30 ngay"; Level = "THAP"; LColor = "Gr" } }
+            if ($tokens.Count -gt 20) { $issues += @{ Type = "Token Store"; Detail = "So luong token bat thuong ($($tokens.Count))"; Level = "TRUNG_BINH"; LColor = "Y" } }
+        }
+    } catch {}
+    try {
+        $spp = Get-CimInstance -ClassName SoftwareLicensingProduct -Filter "ApplicationID='55c92734-d682-4d71-983e-d6ec3f16059f' AND LicenseIsAddon=False" -ErrorAction SilentlyContinue
+        foreach ($p in $spp) {
+            if ($p.GracePeriodRemaining -le 0 -and $p.LicenseStatus -eq 0) {
+                $issues += @{ Type = "Licensing"; Detail = "$($p.Name): Het grace period, chua kich hoat"; Level = "CAO"; LColor = "R" }
+            }
+        }
+    } catch {}
+    return $issues
+}
+
+function Find-CrackADS {
+    $found = @()
+    $adsTargets = @("$env:USERPROFILE\Downloads", "$env:TEMP", "$env:APPDATA", "$env:LOCALAPPDATA\Temp")
+    foreach ($t in $adsTargets) {
+        if (-not (Test-Path $t)) { continue }
+        try {
+            $files = Get-ChildItem $t -File -ErrorAction SilentlyContinue | Select-Object -First 200
+            foreach ($f in $files) {
+                $streams = Get-Item $f.FullName -Stream * -ErrorAction SilentlyContinue | Where-Object { $_.Stream -ne ':$DATA' }
+                foreach ($s in $streams) {
+                    $found += @{ Path = "$($f.FullName):$($s.Stream)"; Name = "$($f.Name):$($s.Stream)"; Size = "{0:N0} KB" -f ($s.Length / 1KB); Level = "CAO"; LColor = "R" }
+                }
+            }
+        } catch {}
+    }
+    return $found
+}
+
+function Get-CrackAdvanced {
+    return @{
+        Registry = Find-CrackRegistryDeep
+        Behavioral = Find-CrackBehavioral
+        ADS = Find-CrackADS
+    }
+}
+
+function Show-CrackAdvanced {
+    $adv = Get-CrackAdvanced
+    $total = $adv.Registry.Count + $adv.Behavioral.Count + $adv.ADS.Count
+    if ($total -eq 0) { return $adv }
+
+    if ($adv.Registry.Count -gt 0) {
+        fe "  $([char]0x2726)  REGISTRY SAU" -Color M; br
+        hr; br
+        foreach ($i in $adv.Registry) {
+            fe "    $([char]0x2717) " -NoNewline -Color $i.LColor
+            fe "$($i.Type)" -NoNewline -Color Y
+            fe ": $($i.Detail)" -Color W; br
+        }
+        br
+    }
+    if ($adv.Behavioral.Count -gt 0) {
+        fe "  $([char]0x2726)  BEHAVIORAL (WMI / TOKEN / SERVICES)" -Color M; br
+        hr; br
+        foreach ($i in $adv.Behavioral) {
+            fe "    $([char]0x2717) " -NoNewline -Color $i.LColor
+            fe "$($i.Type)" -NoNewline -Color Y
+            fe ": $($i.Detail)" -Color W; br
+        }
+        br
+    }
+    if ($adv.ADS.Count -gt 0) {
+        fe "  $([char]0x2726)  ALTERNATE DATA STREAMS (ADS)" -Color M; br
+        hr; br
+        foreach ($i in $adv.ADS) {
+            fe "    $([char]0x26A0) " -NoNewline -Color R
+            fe "$($i.Path)" -Color W; br
+        }
+        br
+    }
+    return $adv
+}
+
 function Show-CrackDetect {
     $traces = Find-CrackTraces
     fe "  $([char]0x2726)  PHAT HIEN CRACK (HE THONG)" -Color M; br
@@ -543,7 +708,8 @@ function Invoke-OEMRestore {
 }
 
 function Export-HTMLReport {
-    param($SysInfo, $Lic, $Traces, $Office, $CrackFiles)
+    param($SysInfo, $Lic, $Traces, $Office, $CrackFiles, $Advanced)
+    $advancedFindings = if ($Advanced) { $Advanced } else { Get-CrackAdvanced }
     $desktop = [Environment]::GetFolderPath('Desktop')
     $path = Join-Path $desktop "FEAR_Report_$(Get-Date -Format yyyyMMdd_HHmmss).html"
     $color = if ($Traces.Count -eq 0) { "#22c55e" } else { "#ef4444" }
@@ -566,6 +732,15 @@ function Export-HTMLReport {
             "<div class='li' style='border-left-color:$c'><span style='color:$c;font-weight:600'>[$($_.Level)]</span> $($_.Name) <span style='color:#6b7280;font-size:11px'>$($_.Path)</span></div>"
         }) -join "`n" + "</div>"
     } else { $fileHtml = '<div class="row"><span class="l">Ket qua</span><span class="v g">Khong tim thay file nghi van</span></div>' }
+    if ($advancedFindings) {
+        $allAdv = $advancedFindings.Registry + $advancedFindings.Behavioral + $advancedFindings.ADS
+        if ($allAdv.Count -gt 0) {
+            $advHtml = "<div class='list'>" + ($allAdv | ForEach-Object {
+                $c = if ($_.Level -eq "CAO") { "#ef4444" } elseif ($_.Level -eq "TRUNG_BINH") { "#facc15" } else { "#6b7280" }
+                "<div class='li' style='border-left-color:$c'><span style='color:$c;font-weight:600'>[$($_.Level)]</span> $($_.Type): $($_.Detail)</div>"
+            }) -join "`n" + "</div>"
+        } else { $advHtml = '<div class="row"><span class="l">Ket qua</span><span class="v g">Khong phat hien bat thuong</span></div>' }
+    } else { $advHtml = '<div class="row"><span class="l">Ket qua</span><span class="v g">Khong phat hien bat thuong</span></div>' }
 
 $html = @"
 <!DOCTYPE html>
@@ -624,6 +799,10 @@ $crackHtml
 $fileHtml
 </div>
 
+<div class="card"><h2>Phat hien nang cao</h2>
+$advHtml
+</div>
+
 <div class="foot">FEAR Windows License Checker v1.0</div>
 </div>
 </body>
@@ -643,13 +822,14 @@ function Show-About {
     fe "    3. Xac dinh kenh ban quyen (Retail/OEM/MAK/KMS)" -Color Gr; br
     fe "    4. Phat hien dau vet crack (service, tac vu, hosts)" -Color Gr; br
     fe "    5. Quet file crack toan bo o dia + Registry + Temp" -Color Gr; br
-    fe "    6. Go bo crack va khoi phuc key OEM" -Color Gr; br; br
+    fe "    6. Phat hien nang cao (WMI, AppInit_DLLs, ADS, Token)" -Color Gr; br
+    fe "    7. Go bo crack va khoi phuc key OEM" -Color Gr; br; br
     fe "  $([char]0x2726) 100% lenh he thong - Khong ma doc" -Color C; br
     fe "  $([char]0x2726) Ma nguon mo - Minh bach" -Color C; br; br
 }
 
 $state = "MENU"
-$gSys = $null; $gLic = $null; $gTraces = $null; $gOff = $null; $gFiles = @()
+$gSys = $null; $gLic = $null; $gTraces = $null; $gOff = $null; $gFiles = @(); $gAdv = $null
 
 while ($state -ne "EXIT") {
     switch ($state) {
@@ -683,6 +863,7 @@ while ($state -ne "EXIT") {
             $gOff = Get-OfficeStatus; Show-OfficeInfo
             $gTraces = Show-CrackDetect
             if ($gTraces.Count -gt 0) { Show-CrackWarning -Traces $gTraces }
+            $gAdv = Show-CrackAdvanced
             $gFiles = Show-CrackFiles
             $startupFiles = Find-CrackStartup
             if ($startupFiles.Count -gt 0) {
@@ -705,6 +886,7 @@ while ($state -ne "EXIT") {
             $gLic = Show-LicenseInfo
             $gTraces = Show-CrackDetect
             if ($gTraces.Count -gt 0) { Show-CrackWarning -Traces $gTraces }
+            $gAdv = Show-CrackAdvanced
             br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
         "CLEANUP" {
@@ -725,7 +907,7 @@ while ($state -ne "EXIT") {
         "EXPORT" {
             banner
             if (-not $gSys) { fe "  $([char]0x2717) Chua co du lieu. Chay muc [1] truoc." -Color Y; br }
-            else { Export-HTMLReport -SysInfo $gSys -Lic $gLic -Traces $gTraces -Office $gOff -CrackFiles $gFiles }
+            else { Export-HTMLReport -SysInfo $gSys -Lic $gLic -Traces $gTraces -Office $gOff -CrackFiles $gFiles -Advanced $gAdv }
             br; fe "  $([char]0x2190) Nhan phim bat ky de quay lai" -Color Gr; Read-Host | Out-Null; $state = "MENU"
         }
         "ABOUT" {
