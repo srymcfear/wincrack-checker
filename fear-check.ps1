@@ -1,4 +1,5 @@
-﻿if ($env:USER -ne "FEAR_HOST") {
+﻿if ($env:USER -ne "FEAR_HOST" -and -not $env:FEAR_DOWNLOADED) {
+    $env:FEAR_DOWNLOADED = "1"
     irm https://raw.githubusercontent.com/srymcfear/wincrack-checker/master/fear-check.ps1 | iex
     exit
 }
